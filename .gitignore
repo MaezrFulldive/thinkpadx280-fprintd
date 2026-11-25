@@ -1,0 +1,14 @@
+# Local working checkouts / build trees (sources are fetched by the flake and PKGBUILDs)
+/libfprint/
+/libfprint-validity-data/
+/reference/
+/pkg-libfprint/
+/arch/*/src/
+/arch/*/pkg/
+/arch/*/*.pkg.tar.*
+/arch/*/libfprint/
+/arch/*/libfprint-validity-data/
+# Personal drafts
+/docs/mr626-comment-draft.md
+result
+result-*

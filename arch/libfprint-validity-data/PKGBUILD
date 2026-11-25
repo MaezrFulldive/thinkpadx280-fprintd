@@ -1,0 +1,31 @@
+# Runtime data (init/reset blobs, TLS keys, firmware signature data) for the
+# libfprint validity/VCSFW driver. Fork used by libfprint MR !626.
+# Keep _commit in sync with nix/libfprint-validity-data.nix.
+
+pkgname=libfprint-validity-data
+_commit=687c5ea51392582d5bcb1e4fa86eea0832a50c5f
+pkgver=0.2.0.r20260925.687c5ea
+pkgrel=1
+pkgdesc="Sensor data files for the libfprint validity/VCSFW fingerprint driver"
+arch=('any')
+url="https://gitlab.freedesktop.org/ggiesen/libfprint-validity-data"
+license=('MIT')
+makedepends=('git' 'python')
+source=("libfprint-validity-data::git+https://gitlab.freedesktop.org/ggiesen/libfprint-validity-data.git#commit=${_commit}")
+sha256sums=('SKIP')
+
+build() {
+  cd libfprint-validity-data
+  make generate
+}
+
+check() {
+  cd libfprint-validity-data
+  make verify
+}
+
+package() {
+  cd libfprint-validity-data
+  make install DESTDIR="$pkgdir" PREFIX=/usr
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

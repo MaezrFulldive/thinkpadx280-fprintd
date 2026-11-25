@@ -1,0 +1,40 @@
+# Replaces the stock Arch libfprint with a build of libfprint MR !626 — the
+# native validity/VCSFW driver (continuation of lewohart's !579) for
+# Synaptics/Validity match-on-chip sensors, including the ThinkPad X280's
+# 06cb:009a. Needs libfprint-validity-data for the runtime blobs.
+#
+# https://gitlab.freedesktop.org/libfprint/libfprint/-/merge_requests/626
+# Pinned to the MR head; keep _commit in sync with nix/libfprint-validity.nix.
+
+pkgname=libfprint-validity
+_commit=5db7da904f74f7fb912d4a18f700a9671d8ab4ac
+pkgver=1.94.100.r20261105.5db7da9
+pkgrel=1
+pkgdesc="Library for fingerprint readers (with the native validity/VCSFW driver, MR !626)"
+arch=('x86_64')
+url="https://gitlab.freedesktop.org/libfprint/libfprint/-/merge_requests/626"
+license=('LGPL-2.1-or-later')
+depends=('libgcc' 'glib2' 'glibc' 'libgudev' 'libgusb' 'openssl' 'pixman' 'libfprint-validity-data')
+makedepends=('git' 'meson' 'ninja' 'gobject-introspection' 'cairo')
+checkdepends=('python-cairo' 'python-gobject')
+provides=("libfprint=${pkgver%%.r*}" 'libfprint-2.so=2-64')
+conflicts=('libfprint')
+options=('!lto')
+source=("libfprint::git+https://gitlab.freedesktop.org/ggiesen/libfprint.git#commit=${_commit}")
+sha256sums=('SKIP')
+
+build() {
+  arch-meson libfprint build \
+    -Dintrospection=true \
+    -Ddoc=false \
+    -Dudev_rules=enabled
+  meson compile -C build
+}
+
+check() {
+  meson test -C build --print-errorlogs
+}
+
+package() {
+  meson install -C build --destdir "$pkgdir"
+}
